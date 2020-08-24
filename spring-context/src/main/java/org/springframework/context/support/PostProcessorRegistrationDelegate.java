@@ -98,7 +98,7 @@ final class PostProcessorRegistrationDelegate {
 			// 排序 BeanDefinitionRegistryPostProcessor
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
 			registryProcessors.addAll(currentRegistryProcessors);
-			// 调用处理 BeanDefinitionRegistryPostProcessor
+			// 调用给定的 BeanDefinitionRegistryPostProcessor
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			currentRegistryProcessors.clear();
 
@@ -112,6 +112,7 @@ final class PostProcessorRegistrationDelegate {
 			}
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
 			registryProcessors.addAll(currentRegistryProcessors);
+			// 调用给定的 BeanDefinitionRegistryPostProcessor
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			currentRegistryProcessors.clear();
 
@@ -270,12 +271,14 @@ final class PostProcessorRegistrationDelegate {
 	}
 
 	/**
+	 * 调用给定的 BeanDefinitionRegistryPostProcessor
 	 * Invoke the given BeanDefinitionRegistryPostProcessor beans.
 	 */
 	private static void invokeBeanDefinitionRegistryPostProcessors(
 			Collection<? extends BeanDefinitionRegistryPostProcessor> postProcessors, BeanDefinitionRegistry registry) {
 
 		for (BeanDefinitionRegistryPostProcessor postProcessor : postProcessors) {
+			// 调用 postProcessBeanDefinitionRegistry 方法，子类的扩展
 			postProcessor.postProcessBeanDefinitionRegistry(registry);
 		}
 	}
