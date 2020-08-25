@@ -18,7 +18,6 @@ public class Application {
 		// 手动添加 BeanFactoryPostProcessor，没有添加 @Component 注解
 		context.addBeanFactoryPostProcessor(new MyBeanDefinitionRegistryPostProcessor());
 
-
 		// Spring如何注册Bean？
 		context.register(IndexDao.class);
 		IndexDao dao = context.getBean(IndexDao.class);

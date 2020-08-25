@@ -80,6 +80,8 @@ final class PostProcessorRegistrationDelegate {
 				}
 			}
 
+			// 定义一个 List<BeanDefinitionRegistryPostProcessor> 存放 Spring 的 BeanDefinitionRegistryPostProcessor
+			// 也就是 ConfigurationClassPostProcessor
 			// Do not initialize FactoryBeans here: We need to leave all regular beans
 			// uninitialized to let the bean factory post-processors apply to them!
 			// Separate between BeanDefinitionRegistryPostProcessors that implement
@@ -97,6 +99,7 @@ final class PostProcessorRegistrationDelegate {
 			}
 			// 排序 BeanDefinitionRegistryPostProcessor
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
+			// 合并
 			registryProcessors.addAll(currentRegistryProcessors);
 			// 调用给定的 BeanDefinitionRegistryPostProcessor
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
