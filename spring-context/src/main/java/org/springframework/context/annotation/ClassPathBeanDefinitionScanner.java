@@ -288,13 +288,18 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 		for (String basePackage : basePackages) {
 			// 真正去扫描
 			Set<BeanDefinition> candidates = findCandidateComponents(basePackage);
+
+			// 循环处理并注册 BeanDefinition
 			for (BeanDefinition candidate : candidates) {
 				// 解析 scope 属性
 				ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(candidate);
 				candidate.setScope(scopeMetadata.getScopeName());
 				// 得到 beanName
 				String beanName = this.beanNameGenerator.generateBeanName(candidate, this.registry);
+
+				// 扫描出来的 Bean 都是 ScannedGenericBeanDefinition 类型，继承自 AbstractBeanDefinition
 				if (candidate instanceof AbstractBeanDefinition) {
+					// 处理 BeanDefinition，先设置默认值，autowire
 					postProcessBeanDefinition((AbstractBeanDefinition) candidate, beanName);
 				}
 				// AnnotatedBeanDefinition 处理被注解的普通 BeanDefinition
@@ -323,6 +328,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 	 * @param beanName       the generated bean name for the given bean
 	 */
 	protected void postProcessBeanDefinition(AbstractBeanDefinition beanDefinition, String beanName) {
+		// 设置默认值
 		beanDefinition.applyDefaults(this.beanDefinitionDefaults);
 		if (this.autowireCandidatePatterns != null) {
 			beanDefinition.setAutowireCandidate(PatternMatchUtils.simpleMatch(this.autowireCandidatePatterns, beanName));

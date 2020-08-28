@@ -127,10 +127,12 @@ abstract class ConfigurationClassUtils {
 		Map<String, Object> config = metadata.getAnnotationAttributes(Configuration.class.getName());
 		// 如果加了 @Configuration 注解，标注为一个配置类
 		if (config != null && !Boolean.FALSE.equals(config.get("proxyBeanMethods"))) {
+			// 加了 @Configuration 注解，设置属性为 full 全注解的类
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL);
 		}
 		// 判断是否为 Component、ComponentScan、Import、ImportResource 四个注解
 		else if (config != null || isConfigurationCandidate(metadata)) {
+			// 没有加 @Configuration 注解，设置属性为 lite 部分注解的类
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_LITE);
 		} else {
 			return false;

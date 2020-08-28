@@ -115,10 +115,15 @@ final class PostProcessorRegistrationDelegate {
 			}
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
 			registryProcessors.addAll(currentRegistryProcessors);
-			// 调用给定的 BeanDefinitionRegistryPostProcessor
+
+			// ********************************************************************************
+			// 调用给定的 BeanDefinitionRegistryPostProcessor -> ConfigurationClassPostProcessor
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
+			// ********************************************************************************
+
 			currentRegistryProcessors.clear();
 
+			// 最后，调用所有的 BeanDefinitionRegistryPostProcessor 实现，直到不再出现
 			// Finally, invoke all other BeanDefinitionRegistryPostProcessors until no further ones appear.
 			boolean reiterate = true;
 			while (reiterate) {
@@ -137,8 +142,11 @@ final class PostProcessorRegistrationDelegate {
 				currentRegistryProcessors.clear();
 			}
 
+			// 调用所有 BeanFactoryPostProcessor 的实现
 			// Now, invoke the postProcessBeanFactory callback of all processors handled so far.
+			// 调用所有 BeanDefinitionRegistryPostProcessor 中的 BeanFactoryPostProcessor 的实现
 			invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
+			// 调用所有 BeanFactoryPostProcessor 的实现
 			invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
 		} else {
 			// Invoke factory processors registered with the context instance.

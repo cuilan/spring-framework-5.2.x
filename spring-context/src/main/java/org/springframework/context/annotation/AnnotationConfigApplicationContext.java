@@ -70,6 +70,8 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 		// 初始化被注解的BeanDefinition读取器
 		this.reader = new AnnotatedBeanDefinitionReader(this);
 		// 初始化ClassPath下BeanDefinition的扫描器
+		// 这里的 scanner 仅仅是提供给程序员外部调用的，Spring 内部扫描包使用的是下面方法中的 scanner
+		// org.springframework.context.annotation.ComponentScanAnnotationParser#parse
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
 	}
 
