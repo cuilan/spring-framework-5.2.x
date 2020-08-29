@@ -229,6 +229,7 @@ class ConfigurationClassParser {
 		if (existingClass != null) {
 			if (configClass.isImported()) {
 				if (existingClass.isImported()) {
+					// 合并放入 configurationClasses 中
 					existingClass.mergeImportedBy(configClass);
 				}
 				// Otherwise ignore new imported config class; existing non-imported class overrides it.
@@ -307,6 +308,9 @@ class ConfigurationClassParser {
 				}
 			}
 		}
+		// ************************************************************************************
+		// 以上代码是扫描普通类 -> @Component 注解的类，并且已经放入 BeanDefinitionMap 中
+		// ************************************************************************************
 
 		// 处理 @Imports 注解
 		// Process any @Import annotations
@@ -324,6 +328,7 @@ class ConfigurationClassParser {
 			}
 		}
 
+		// ASM 反射获取所有加了 @Bean 注解的方法，表示是一个被 Spring 管理的 Bean
 		// Process individual @Bean methods
 		Set<MethodMetadata> beanMethods = retrieveBeanMethodMetadata(sourceClass);
 		for (MethodMetadata methodMetadata : beanMethods) {
@@ -611,6 +616,9 @@ class ConfigurationClassParser {
 					}
 					// 处理普通配置类
 					else {
+						// 如果是一个普通配置类，则加入 importStack 后，再调用 processConfigurationClass 进行后置处理
+						// processConfigurationClass 里面会将当前 configClass 类放入 configurationClasses 中
+						// configurationClasses 是一个 Map，会在后续拿出来解析为 BeanDefinition 继而注册
 						// Candidate class not an ImportSelector or ImportBeanDefinitionRegistrar ->
 						// process it as an @Configuration class
 						this.importStack.registerImport(

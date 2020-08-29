@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
 @Configuration
 @ComponentScan("cn.cuilan.ioc")
 //@Import(IndexDao.class)
-//@Import(MyImportSelector.class)
-@Import(MyImportBeanDefinitionRegistrar.class)
+@Import(MyImportSelector.class)
+//@Import(MyImportBeanDefinitionRegistrar.class)
 public class Config {
 }

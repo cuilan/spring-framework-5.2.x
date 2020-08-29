@@ -101,8 +101,11 @@ final class PostProcessorRegistrationDelegate {
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
 			// 合并
 			registryProcessors.addAll(currentRegistryProcessors);
-			// 调用给定的 BeanDefinitionRegistryPostProcessor
+
+			// ********************************************************************************
+			// 调用给定的 BeanDefinitionRegistryPostProcessor -> ConfigurationClassPostProcessor
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
+			// ********************************************************************************
 			currentRegistryProcessors.clear();
 
 			// Next, invoke the BeanDefinitionRegistryPostProcessors that implement Ordered.
@@ -115,11 +118,7 @@ final class PostProcessorRegistrationDelegate {
 			}
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
 			registryProcessors.addAll(currentRegistryProcessors);
-
-			// ********************************************************************************
-			// 调用给定的 BeanDefinitionRegistryPostProcessor -> ConfigurationClassPostProcessor
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
-			// ********************************************************************************
 
 			currentRegistryProcessors.clear();
 
