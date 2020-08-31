@@ -628,7 +628,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	}
 
 	/**
-	 * // Spring 上下文容器刷新前的准备
+	 * Spring 上下文容器刷新前的准备
 	 * 设置启动时间
 	 * 是否激活标志位
 	 * 初始化属性源配置

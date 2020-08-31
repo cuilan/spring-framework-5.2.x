@@ -425,11 +425,13 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 				configBeanDefs.put(beanName, (AbstractBeanDefinition) beanDef);
 			}
 		}
+		// 如果配置类是一个 lite 部分配置类，则不会放入 configBeanDefs 中
 		if (configBeanDefs.isEmpty()) {
 			// nothing to enhance -> return immediately
 			return;
 		}
 
+		// 如果配置类是一个 full 全配置类，则会生成 CGLIB 代理类
 		ConfigurationClassEnhancer enhancer = new ConfigurationClassEnhancer();
 		for (Map.Entry<String, AbstractBeanDefinition> entry : configBeanDefs.entrySet()) {
 			AbstractBeanDefinition beanDef = entry.getValue();
