@@ -98,6 +98,7 @@ class ConfigurationClassEnhancer {
 	 * @return the enhanced subclass
 	 */
 	public Class<?> enhance(Class<?> configClass, @Nullable ClassLoader classLoader) {
+		// 判断当前配置类是否已经被代理过
 		if (EnhancedConfiguration.class.isAssignableFrom(configClass)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug(String.format("Ignoring request to enhance %s as it has " +
@@ -333,6 +334,8 @@ class ConfigurationClassEnhancer {
 				}
 			}
 
+			// 判断配置类中的 @Bean 注解声明的 bean 是调用 new 还是 getBean?
+			// 保证单例不被破坏，一个 bean 只能被实例化一次
 			if (isCurrentlyInvokedFactoryMethod(beanMethod)) {
 				// The factory is calling the bean method in order to instantiate and register the bean
 				// (i.e. via a getBean() call) -> invoke the super implementation of the method to actually
@@ -347,10 +350,12 @@ class ConfigurationClassEnhancer {
 									"these container lifecycle issues; see @Bean javadoc for complete details.",
 							beanMethod.getDeclaringClass().getSimpleName(), beanMethod.getName()));
 				}
+				// 如果是第一次调用 @Bean 的方法，则调用父类的方法
+				// 由于当前 full 全配置类的代理类是基于继承来实现的，因此直接调用父类原始的 new 操作，完成对象的创建
 				return cglibMethodProxy.invokeSuper(enhancedConfigInstance, beanMethodArgs);
 			}
 
-			// 判断当前 @Configuration 全配置类中 @Bean 是否已经被创建，如果创建，直接返回
+			// 当前 @Configuration 全配置类中 @Bean 已经被创建，从 beanFactory 中 get 出来并返回
 			return resolveBeanReference(beanMethod, beanMethodArgs, beanFactory, beanName);
 		}
 
@@ -361,6 +366,7 @@ class ConfigurationClassEnhancer {
 			// the bean method, direct or indirect. The bean may have already been marked
 			// as 'in creation' in certain autowiring scenarios; if so, temporarily set
 			// the in-creation status to false in order to avoid an exception.
+			// 判断当前 beanName 是否正在创建
 			boolean alreadyInCreation = beanFactory.isCurrentlyInCreation(beanName);
 			try {
 				if (alreadyInCreation) {
@@ -424,6 +430,12 @@ class ConfigurationClassEnhancer {
 					BeanAnnotationHelper.isBeanAnnotated(candidateMethod));
 		}
 
+		/**
+		 * 从代理配置类中获得 beanFactory
+		 *
+		 * @param enhancedConfigInstance 被代理的配置类对象
+		 * @return 返回 $$beanFactory 工厂
+		 */
 		private ConfigurableBeanFactory getBeanFactory(Object enhancedConfigInstance) {
 			Field field = ReflectionUtils.findField(enhancedConfigInstance.getClass(), BEAN_FACTORY_FIELD);
 			Assert.state(field != null, "Unable to find generated bean factory field");

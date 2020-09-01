@@ -145,7 +145,8 @@ final class PostProcessorRegistrationDelegate {
 			// Now, invoke the postProcessBeanFactory callback of all processors handled so far.
 			// 调用所有 BeanDefinitionRegistryPostProcessor 中的 BeanFactoryPostProcessor 的实现
 			invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
-			// 调用所有 BeanFactoryPostProcessor 的实现
+
+			// 调用所有 BeanFactoryPostProcessor 的实现（自定义的）
 			invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
 		} else {
 			// Invoke factory processors registered with the context instance.
@@ -195,6 +196,7 @@ final class PostProcessorRegistrationDelegate {
 
 		// Clear cached merged bean definitions since the post-processors might have
 		// modified the original metadata, e.g. replacing placeholders in values...
+		// 清除缓存
 		beanFactory.clearMetadataCache();
 	}
 

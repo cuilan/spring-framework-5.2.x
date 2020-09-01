@@ -15,6 +15,8 @@ public class Application {
 	private static void test1() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Config.class);
 
+		Config bean = context.getBean(Config.class);
+
 		// 手动添加 BeanFactoryPostProcessor，没有添加 @Component 注解
 		context.addBeanFactoryPostProcessor(new MyBeanDefinitionRegistryPostProcessor());
 
