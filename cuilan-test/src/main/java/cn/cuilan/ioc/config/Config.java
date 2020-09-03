@@ -5,6 +5,7 @@ import cn.cuilan.ioc.imports.MyImportBeanDefinitionRegistrar;
 import cn.cuilan.ioc.imports.MyImportSelector;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 
 /**
@@ -16,5 +17,6 @@ import org.springframework.context.annotation.Import;
 //@Import(IndexDao.class)
 @Import(MyImportSelector.class)
 //@Import(MyImportBeanDefinitionRegistrar.class)
+@EnableAspectJAutoProxy
 public class Config {
 }
