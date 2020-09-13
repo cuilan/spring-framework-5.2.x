@@ -217,6 +217,8 @@ class ConstructorResolver {
 			AutowireUtils.sortConstructors(candidates);
 			// 最小类型差异权重，差异变量
 			int minTypeDiffWeight = Integer.MAX_VALUE;
+
+			// 存储相似的构造器集合
 			Set<Constructor<?>> ambiguousConstructors = null;
 			LinkedList<UnsatisfiedDependencyException> causes = null;
 
@@ -225,11 +227,13 @@ class ConstructorResolver {
 				// 拿到构造方法参数个数
 				int parameterCount = candidate.getParameterCount();
 
+				// 这里如果已经找到构造函数，并且参数不等于空，则结束循环
 				if (constructorToUse != null && argsToUse != null && argsToUse.length > parameterCount) {
 					// Already found greedy constructor that can be satisfied ->
 					// do not look any further, there are only less greedy constructors left.
 					break;
 				}
+				// 如果该构造方法的参数长度小于最小参数长度，说明不匹配
 				if (parameterCount < minNrOfArgs) {
 					continue;
 				}
@@ -238,13 +242,17 @@ class ConstructorResolver {
 				Class<?>[] paramTypes = candidate.getParameterTypes();
 				if (resolvedValues != null) {
 					try {
+						// 判断是否添加了 ConstructorProperties 注解，如果加了则拿出来
 						String[] paramNames = ConstructorPropertiesChecker.evaluate(candidate, parameterCount);
+						// 如果没有获取到 paramNames
 						if (paramNames == null) {
+							// 则从 beanFactory 中获取参数名称列表
 							ParameterNameDiscoverer pnd = this.beanFactory.getParameterNameDiscoverer();
 							if (pnd != null) {
 								paramNames = pnd.getParameterNames(candidate);
 							}
 						}
+						// 根据拿到的参数名称，转换为一个对象，放在 argsHolder 中
 						argsHolder = createArgumentArray(beanName, mbd, resolvedValues, bw, paramTypes, paramNames,
 								getUserDeclaredConstructor(candidate), autowiring, candidates.length == 1);
 					} catch (UnsatisfiedDependencyException ex) {
@@ -268,22 +276,27 @@ class ConstructorResolver {
 
 				int typeDiffWeight = (mbd.isLenientConstructorResolution() ?
 						argsHolder.getTypeDifferenceWeight(paramTypes) : argsHolder.getAssignabilityWeight(paramTypes));
+				// 如果类型差异权重小于最小差异权重，则选择这个构造函数
 				// Choose this constructor if it represents the closest match.
 				if (typeDiffWeight < minTypeDiffWeight) {
 					constructorToUse = candidate;
 					argsHolderToUse = argsHolder;
 					argsToUse = argsHolder.arguments;
 					minTypeDiffWeight = typeDiffWeight;
+					// 设置相似构造器集合为空
 					ambiguousConstructors = null;
 				} else if (constructorToUse != null && typeDiffWeight == minTypeDiffWeight) {
 					if (ambiguousConstructors == null) {
 						ambiguousConstructors = new LinkedHashSet<>();
 						ambiguousConstructors.add(constructorToUse);
 					}
+					// 当前还没有选择合适的构造器，并且类型差异权重等于最小类型差异权重，
+					// 则将该构造器加入相似构造器集合
 					ambiguousConstructors.add(candidate);
 				}
 			}
 
+			// 没有找到合适的构造方法
 			if (constructorToUse == null) {
 				if (causes != null) {
 					UnsatisfiedDependencyException ex = causes.removeLast();
@@ -295,7 +308,9 @@ class ConstructorResolver {
 				throw new BeanCreationException(mbd.getResourceDescription(), beanName,
 						"Could not resolve matching constructor " +
 								"(hint: specify index/type/name arguments for simple parameters to avoid type ambiguities)");
-			} else if (ambiguousConstructors != null && !mbd.isLenientConstructorResolution()) {
+			}
+			// 相似构造器集合不为空，则抛出异常
+			else if (ambiguousConstructors != null && !mbd.isLenientConstructorResolution()) {
 				throw new BeanCreationException(mbd.getResourceDescription(), beanName,
 						"Ambiguous constructor matches found in bean '" + beanName + "' " +
 								"(hint: specify index/type/name arguments for simple parameters to avoid type ambiguities): " +
@@ -308,6 +323,7 @@ class ConstructorResolver {
 		}
 
 		Assert.state(argsToUse != null, "Unresolved constructor arguments");
+		// 最终反射出来
 		bw.setBeanInstance(instantiate(beanName, mbd, constructorToUse, argsToUse));
 		return bw;
 	}

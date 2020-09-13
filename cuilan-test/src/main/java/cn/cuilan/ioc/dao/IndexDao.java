@@ -9,6 +9,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class IndexDao {
 
+	public IndexDao() {
+	}
+
 	public void query() {
 		System.out.println("IndexDao query...");
 	}
