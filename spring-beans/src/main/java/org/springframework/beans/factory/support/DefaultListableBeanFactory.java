@@ -1337,7 +1337,9 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			if (autowiredBeanNames != null) {
 				autowiredBeanNames.add(autowiredBeanName);
 			}
+			// 如果依赖的属性是一个类，也是一个 Bean
 			if (instanceCandidate instanceof Class) {
+				// 从 BeanFactory 中 getBean()
 				instanceCandidate = descriptor.resolveCandidate(autowiredBeanName, type, this);
 			}
 			Object result = instanceCandidate;
