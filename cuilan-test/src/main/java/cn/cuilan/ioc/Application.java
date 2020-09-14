@@ -2,6 +2,7 @@ package cn.cuilan.ioc;
 
 import cn.cuilan.ioc.config.Config;
 import cn.cuilan.ioc.dao.IndexDao;
+import cn.cuilan.ioc.dao.TestDao;
 import cn.cuilan.ioc.postprocessor.MyBeanDefinitionRegistryPostProcessor;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -21,9 +22,10 @@ public class Application {
 		context.addBeanFactoryPostProcessor(new MyBeanDefinitionRegistryPostProcessor());
 
 		// Spring如何注册Bean？
-		context.register(IndexDao.class);
+		// context.register(IndexDao.class);
 		IndexDao dao = context.getBean(IndexDao.class);
 		dao.query();
+		TestDao testDao = context.getBean(TestDao.class);
 	}
 
 	public static void main(String[] args) {

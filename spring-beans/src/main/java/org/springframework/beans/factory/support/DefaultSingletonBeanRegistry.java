@@ -78,16 +78,19 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 
 	/**
 	 * Cache of singleton objects: bean name to bean instance.
+	 * 用于存放初始化好的 Bean，从该 Map 中 getBean() 可直接使用
 	 */
 	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
 	/**
 	 * Cache of singleton factories: bean name to ObjectFactory.
+	 * 存放 Bean 工厂对象，解决循环依赖
 	 */
 	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
 
 	/**
 	 * Cache of early singleton objects: bean name to bean instance.
+	 * 存放原始的 Bean 对象用于解决循环依赖，注意：存在此 Map 中的 Bean 对象还没有完成属性填充
 	 */
 	private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
 
@@ -247,7 +250,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				if (logger.isDebugEnabled()) {
 					logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
 				}
-				// 创建之前将 beanName 放入 singletonsCurrentlyInCreation set 集合中
+				// 创建之前将 beanName 放入 DefaultSingletonBeanRegistry.singletonsCurrentlyInCreation set 集合中
 				beforeSingletonCreation(beanName);
 
 				boolean newSingleton = false;
